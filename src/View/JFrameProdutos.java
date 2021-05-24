@@ -5,6 +5,11 @@
  */
 package View;
 
+import javax.swing.JOptionPane;
+
+import Controller.ProdutoController;
+import Model.ProdutoModel;
+
 /**
  *
  * @author gesse
@@ -14,9 +19,17 @@ public class JFrameProdutos extends javax.swing.JFrame {
     /**
      * Creates new form JFrameProdutos
      */
+    ProdutoModel produtoModel;
+    ProdutoController produtoController;
     public JFrameProdutos() {
           this.setLocationRelativeTo(null);
-        initComponents();
+          initComponents();
+          txtId.setEnabled(false);
+          txtValorTot.setEnabled(false);
+          habilitarCampos(false);
+          produtoModel = new ProdutoModel();
+          produtoController = new ProdutoController();
+        
     }
 
     /**
@@ -69,6 +82,7 @@ public class JFrameProdutos extends javax.swing.JFrame {
         jScrollPane1.setViewportView(JtextDesc);
 
         jLabel4.setText("Quantidade");
+        
 
         jLabel5.setText("Preço");
 
@@ -280,11 +294,18 @@ public class JFrameProdutos extends javax.swing.JFrame {
     }//GEN-LAST:event_tabelaMousePressed
 
     private void btn_novoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_novoActionPerformed
+        habilitarCampos(true);
+        produtoController.proximoProduto();
+        txtId.setText(produtoController.proximoProduto());
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_novoActionPerformed
 
     private void btn_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_saveActionPerformed
         // TODO add your handling code here:
+        pegaDados();
+        produtoController.verificaDados(produtoModel);
+        limparCampos();
+        habilitarCampos(false);
     }//GEN-LAST:event_btn_saveActionPerformed
 
     private void btn_save1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save1ActionPerformed
@@ -358,4 +379,52 @@ public class JFrameProdutos extends javax.swing.JFrame {
     private javax.swing.JTextField txtQtd;
     private javax.swing.JTextField txtValorTot;
     // End of variables declaration//GEN-END:variables
+
+    final void pegaDados()
+    {
+       
+        int iValue =0;
+        double iValue1=0.0;
+        produtoModel.setNome(txtNome.getText());
+        produtoModel.setDescricao(JtextDesc.getText());
+        try {
+             double value = Double.parseDouble(txtQtd.getText().trim().replaceAll(",", "."));
+             iValue = (int) value;
+            produtoModel.setQtd(iValue);
+        } catch (NumberFormatException exception) {
+            JOptionPane.showMessageDialog(null, "Campo Quantidade Obrigatorio");
+            produtoModel.setQtd(0);
+            //TODO: handle exception
+        }
+        try {
+             double value1 = Double.parseDouble(txtPreco.getText().trim().replaceAll(",", "."));
+             iValue1 =  value1;
+            produtoModel.setPreco(iValue1);
+        } catch (NumberFormatException exception) {
+            JOptionPane.showMessageDialog(null, "Campo Preço Obrigatorio");
+            // TODO: handle exception
+        }
+        double total = iValue1 * iValue;
+        txtValorTot.setText(String.valueOf(total).format("%.2f", total));
+    }
+
+    final void limparCampos()
+    {
+        txtId.setText("");
+        txtNome.setText("");
+        JtextDesc.setText("");
+        txtQtd.setText("");
+        txtPreco.setText("");
+        txtValorTot.setText("");
+    }
+
+    final void habilitarCampos(boolean valor) {
+        txtNome.setEnabled(valor);
+        JtextDesc.setEnabled(valor);
+        txtQtd.setEnabled(valor);
+        txtPreco.setEnabled(valor);
+        txtBuscar.setEnabled(valor);
+        
+        
+    }
 }
