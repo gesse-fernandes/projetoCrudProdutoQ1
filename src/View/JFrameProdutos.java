@@ -6,6 +6,7 @@
 package View;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 import Controller.ProdutoController;
 import Model.ProdutoModel;
@@ -21,6 +22,7 @@ public class JFrameProdutos extends javax.swing.JFrame {
      */
     ProdutoModel produtoModel;
     ProdutoController produtoController;
+    DefaultTableModel modelo;
     public JFrameProdutos() {
           this.setLocationRelativeTo(null);
           initComponents();
@@ -29,6 +31,8 @@ public class JFrameProdutos extends javax.swing.JFrame {
           habilitarCampos(false);
           produtoModel = new ProdutoModel();
           produtoController = new ProdutoController();
+          modelo = (DefaultTableModel) tabela.getModel();
+
         
     }
 
@@ -286,11 +290,22 @@ public class JFrameProdutos extends javax.swing.JFrame {
 
     private void btn_consultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_consultaActionPerformed
         // TODO add your handling code here:
-        System.out.println("voce clicou aqui");
+        modelo.setNumRows(0);
+       produtoController.pesquisaProduto(txtBuscar.getText(), modelo);
     }//GEN-LAST:event_btn_consultaActionPerformed
 
     private void tabelaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaMousePressed
         // TODO add your handling code here:
+        habilitarCampos(true);
+        produtoModel = produtoController
+                .preencherCampos(Integer.parseInt(modelo.getValueAt(tabela.getSelectedRow(), 0).toString()));
+        txtId.setText(produtoModel.getId() + "");
+        txtNome.setText(produtoModel.getNome());
+        JtextDesc.setText(produtoModel.getDescricao());
+        txtQtd.setText(produtoModel.getQtd() + "");
+        txtPreco.setText(produtoModel.getPreco() + "");
+        txtValorTot.setText(produtoModel.getValorTotal()+ "");
+                
     }//GEN-LAST:event_tabelaMousePressed
 
     private void btn_novoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_novoActionPerformed
@@ -305,14 +320,26 @@ public class JFrameProdutos extends javax.swing.JFrame {
         pegaDados();
         produtoController.verificaDados(produtoModel);
         limparCampos();
-        habilitarCampos(false);
+        txtBuscar.setText("");
+       
     }//GEN-LAST:event_btn_saveActionPerformed
 
     private void btn_save1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save1ActionPerformed
+        pegaDados();
+        produtoController.EditarCampos(produtoModel);
+        
+        limparCampos();
+        txtBuscar.setText("");
+        habilitarCampos(true);
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_save1ActionPerformed
 
     private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        modelo.removeRow(tabela.getSelectedRow());
+        produtoController.deletar(produtoModel);
+        limparCampos();
+        habilitarCampos(true);
+
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_deleteActionPerformed
 
@@ -392,7 +419,7 @@ public class JFrameProdutos extends javax.swing.JFrame {
              iValue = (int) value;
             produtoModel.setQtd(iValue);
         } catch (NumberFormatException exception) {
-            JOptionPane.showMessageDialog(null, "Campo Quantidade Obrigatorio");
+            JOptionPane.showMessageDialog(null, "Campo Quantidade Obrigatorio ou Voce Digitou Invalido Pois deve ser numerico");
             produtoModel.setQtd(0);
             //TODO: handle exception
         }
@@ -401,11 +428,13 @@ public class JFrameProdutos extends javax.swing.JFrame {
              iValue1 =  value1;
             produtoModel.setPreco(iValue1);
         } catch (NumberFormatException exception) {
-            JOptionPane.showMessageDialog(null, "Campo Preço Obrigatorio");
+            JOptionPane.showMessageDialog(null, "Campo Preço Obrigatorio ou voce digitou invalido pois deve ser numeros com casas decimais");
             // TODO: handle exception
         }
         double total = iValue1 * iValue;
-        txtValorTot.setText(String.valueOf(total).format("%.2f", total));
+        String.valueOf(total);
+        produtoModel.setValorTotal(total);
+        txtValorTot.setText(String.format("%.2f", total));
     }
 
     final void limparCampos()

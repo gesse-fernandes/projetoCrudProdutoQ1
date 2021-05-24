@@ -6,6 +6,7 @@ public class ProdutoModel {
     private String descricao;
     private Integer qtd;
     private double preco;
+    private double valorTotal;
     public Integer getId() {
         return id;
     }
@@ -35,6 +36,12 @@ public class ProdutoModel {
     }
     public void setPreco(double preco) {
         this.preco = preco;
+    }
+    public double getValorTotal() {
+        return valorTotal;
+    }
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
     }
     
 
